@@ -323,6 +323,14 @@ export default function Admin() {
                             }
                           </TableCell>
                           <TableCell>
+                            <button
+                              onClick={() => updateCimiteroMutation.mutate({ id: c.id, data: { ...c, attivo: !c.attivo } })}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${c.attivo ? 'bg-green-500' : 'bg-slate-300'}`}
+                            >
+                              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${c.attivo ? 'translate-x-6' : 'translate-x-1'}`} />
+                            </button>
+                          </TableCell>
+                          <TableCell>
                             <div className="flex gap-1">
                               {c.google_sheet_id && (
                                 <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
