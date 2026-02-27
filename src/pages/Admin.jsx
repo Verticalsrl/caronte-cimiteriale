@@ -43,6 +43,7 @@ export default function Admin() {
   const [isDefuntoDialogOpen, setIsDefuntoDialogOpen] = useState(false);
   const [editingCimitero, setEditingCimitero] = useState(null);
   const [isCimiteroDialogOpen, setIsCimiteroDialogOpen] = useState(false);
+  const [importingId, setImportingId] = useState(null);
   const queryClient = useQueryClient();
 
   // Fetch data
