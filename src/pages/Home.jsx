@@ -107,7 +107,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {loadingCimiteri
                 ? Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-36 rounded-2xl" />)
-                : cimiteri.filter(c => c.tipo === 'maggiore').map(c => (
+                : cimiteri.filter(c => c.tipo === 'maggiore' && c.attivo !== false).map(c => (
                   <button
                     key={c.id}
                     onClick={() => setSelectedCimitero(c)}
@@ -145,7 +145,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {loadingCimiteri
                 ? Array(8).fill(0).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)
-                : cimiteri.filter(c => c.tipo === 'minore').map(c => (
+                : cimiteri.filter(c => c.tipo === 'minore' && c.attivo !== false).map(c => (
                   <button
                     key={c.id}
                     onClick={() => setSelectedCimitero(c)}
