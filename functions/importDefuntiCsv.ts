@@ -72,31 +72,30 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'CSV vuoto o non valido' }, { status: 400 });
     }
 
-    // Delete existing defunti for this cemetery
-    const existing = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id });
-    for (const d of existing) {
-      await base44.asServiceRole.entities.Defunto.delete(d.id);
+    // Delete existing defunti for this cemetery in batches
+    let existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
+    while (existingPage.length > 0) {
+      await Promise.all(existingPage.map(d => base44.asServiceRole.entities.Defunto.delete(d.id)));
+      existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
     }
 
-    // Import new records
-    let imported = 0;
+    // Build records to import
+    const records = [];
     for (const row of rows) {
       const cognome = row['defunto_cognome']?.trim();
       const nome = row['defunto_nome']?.trim();
       if (!cognome && !nome) continue;
 
       const settore = row['settore']?.trim() || row['settore_codice']?.trim() || '';
-      // fila/numero from loculo_numero: "fila/numero"
       const loculoNum = row['loculo_numero']?.trim() || '';
       const [fila, numero] = loculoNum.includes('/') ? loculoNum.split('/') : ['', loculoNum];
 
-      await base44.asServiceRole.entities.Defunto.create({
+      records.push({
         cognome: cognome || '',
         nome: nome || '',
         data_nascita: parseDate(row['defunto_datanascita']),
         data_morte: parseDate(row['defunto_datadecesso']),
         settore: settore,
-        blocco: row['blocco']?.trim() || '',
         fila: fila?.trim() || '',
         numero: numero?.trim() || '',
         tipo_sepoltura: 'loculo',
@@ -104,10 +103,15 @@ Deno.serve(async (req) => {
         note: row['blocco']?.trim() || '',
         cimitero_id,
       });
-      imported++;
     }
 
-    return Response.json({ success: true, imported, total: rows.length });
+    // Bulk insert in batches of 100
+    const BATCH = 100;
+    for (let i = 0; i < records.length; i += BATCH) {
+      await base44.asServiceRole.entities.Defunto.bulkCreate(records.slice(i, i + BATCH));
+    }
+
+    return Response.json({ success: true, imported: records.length, total: rows.length });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
