@@ -149,6 +149,27 @@ export default function Admin() {
 
   const getCimiteroNome = (id) => cimiteri.find(c => c.id === id)?.nome || '-';
 
+  const handleImportCsv = async (cimitero) => {
+    const csvUrl = cimitero.google_sheet_id;
+    if (!csvUrl) {
+      toast.error('Nessun URL CSV configurato per questo cimitero');
+      return;
+    }
+    setImportingId(cimitero.id);
+    try {
+      const resp = await base44.functions.invoke('importDefuntiCsv', {
+        cimitero_id: cimitero.id,
+        csv_url: csvUrl,
+      });
+      toast.success(`Importati ${resp.data.imported} defunti`);
+      queryClient.invalidateQueries(['defunti-admin']);
+    } catch (e) {
+      toast.error('Errore importazione: ' + e.message);
+    } finally {
+      setImportingId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
