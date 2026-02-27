@@ -323,6 +323,16 @@ export default function Admin() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-1">
+                              {c.google_sheet_id && (
+                                <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                  title="Aggiorna dati dal CSV"
+                                  disabled={importingId === c.id}
+                                  onClick={() => handleImportCsv(c)}>
+                                  {importingId === c.id
+                                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                                    : <RefreshCw className="h-4 w-4" />}
+                                </Button>
+                              )}
                               <Button size="sm" variant="ghost" onClick={() => { setEditingCimitero(c); setIsCimiteroDialogOpen(true); }}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
