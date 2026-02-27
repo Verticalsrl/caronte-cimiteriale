@@ -301,6 +301,7 @@ export default function Admin() {
                         <TableHead>Indirizzo</TableHead>
                         <TableHead>Zona</TableHead>
                         <TableHead>GeoJSON</TableHead>
+                        <TableHead>Attivo</TableHead>
                         <TableHead className="w-24">Azioni</TableHead>
                       </TableRow>
                     </TableHeader>
