@@ -243,9 +243,19 @@ export default function Home() {
                     <h3 className="font-medium text-slate-700 group-hover:text-slate-900 mt-2 text-sm leading-snug">
                       {c.nome}
                     </h3>
-                    {c.zona && (
-                      <p className="text-xs text-slate-400 mt-1">{c.zona}</p>
-                    )}
+                    <div className="flex items-center justify-between mt-2">
+                      {c.zona && <p className="text-xs text-slate-400">{c.zona}</p>}
+                      <a
+                        href={MAPPA_PDF_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs text-slate-500 hover:text-amber-700 font-medium ml-auto"
+                      >
+                        <FileDown className="h-3 w-3" />
+                        Mappa
+                      </a>
+                    </div>
                   </button>
                 ))
               }
