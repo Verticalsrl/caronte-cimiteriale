@@ -18,12 +18,28 @@ export default function Home() {
   const [searchParams, setSearchParams] = useState({ searchText: '', settore: '' });
   const [selectedDefunto, setSelectedDefunto] = useState(null);
   const [geojsonData, setGeojsonData] = useState(null);
+  const [globalSearch, setGlobalSearch] = useState('');
 
   // Fetch cimiteri
   const { data: cimiteri = [], isLoading: loadingCimiteri } = useQuery({
     queryKey: ['cimiteri'],
     queryFn: () => base44.entities.Cimitero.list('nome'),
   });
+
+  // Fetch tutti i defunti per la ricerca globale
+  const { data: tuttiDefunti = [], isLoading: loadingGlobal } = useQuery({
+    queryKey: ['defunti-global'],
+    queryFn: () => base44.entities.Defunto.list('cognome', 5000),
+    enabled: globalSearch.length >= 2,
+  });
+
+  const globalResults = useMemo(() => {
+    if (globalSearch.length < 2) return [];
+    const q = globalSearch.toLowerCase();
+    return tuttiDefunti.filter(d =>
+      d.nome?.toLowerCase().includes(q) || d.cognome?.toLowerCase().includes(q)
+    ).slice(0, 30);
+  }, [tuttiDefunti, globalSearch]);
 
   // Fetch defunti del cimitero selezionato
   const { data: defunti = [], isLoading: loadingDefunti } = useQuery({
