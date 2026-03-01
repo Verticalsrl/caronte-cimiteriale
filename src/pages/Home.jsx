@@ -203,8 +203,8 @@ export default function Home() {
           </button>
 
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-              <Flower2 className="h-6 w-6 text-white" />
+            <div className="h-12 w-12 flex items-center justify-center">
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a1b4d9acc7322885902155/103cfcb77_image.png" alt="Logo" className="h-12 w-12 object-contain" />
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-light tracking-wide">
