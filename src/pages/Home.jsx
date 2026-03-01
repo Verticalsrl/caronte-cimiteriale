@@ -196,11 +196,23 @@ export default function Home() {
                     {c.indirizzo && (
                       <p className="text-sm text-slate-400 mt-1 truncate">{c.indirizzo}</p>
                     )}
-                    <div className="flex items-center gap-2 mt-3">
-                      <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs">Maggiore</Badge>
-                      {c.estensione_ha && (
-                        <span className="text-xs text-slate-400">{c.estensione_ha} ha</span>
-                      )}
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs">Maggiore</Badge>
+                        {c.estensione_ha && (
+                          <span className="text-xs text-slate-400">{c.estensione_ha} ha</span>
+                        )}
+                      </div>
+                      <a
+                        href={MAPPA_PDF_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 font-medium"
+                      >
+                        <FileDown className="h-3.5 w-3.5" />
+                        Mappa
+                      </a>
                     </div>
                   </button>
                 ))
