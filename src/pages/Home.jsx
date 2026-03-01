@@ -79,8 +79,8 @@ export default function Home() {
         <header className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white">
           <div className="max-w-6xl mx-auto px-4 py-10 md:py-16">
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-                <Flower2 className="h-7 w-7 text-white" />
+              <div className="h-14 w-14 flex items-center justify-center">
+                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a1b4d9acc7322885902155/103cfcb77_image.png" alt="Logo" className="h-14 w-14 object-contain" />
               </div>
               <div>
                 <h1 className="text-2xl md:text-4xl font-light tracking-wide">
