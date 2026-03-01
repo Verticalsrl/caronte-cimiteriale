@@ -118,6 +118,58 @@ export default function Home() {
         </header>
 
         <main className="max-w-6xl mx-auto px-4 py-10">
+
+          {/* Ricerca globale */}
+          <div className="mb-10 -mt-6 relative z-10">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-4 md:p-6">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Input
+                  type="text"
+                  placeholder="Cerca un defunto in tutti i cimiteri..."
+                  value={globalSearch}
+                  onChange={e => setGlobalSearch(e.target.value)}
+                  className="pl-12 h-12 text-base border-slate-200 focus:border-amber-500 rounded-xl"
+                />
+                {globalSearch && (
+                  <button onClick={() => setGlobalSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              {globalSearch.length >= 2 && (
+                <div className="mt-3 border border-slate-100 rounded-xl overflow-hidden">
+                  {loadingGlobal ? (
+                    <div className="p-4 text-sm text-slate-400">Ricerca in corso...</div>
+                  ) : globalResults.length === 0 ? (
+                    <div className="p-4 text-sm text-slate-400">Nessun risultato trovato</div>
+                  ) : (
+                    <ScrollArea className="max-h-72">
+                      {globalResults.map(d => {
+                        const cimitero = cimiteri.find(c => c.id === d.cimitero_id);
+                        return (
+                          <button
+                            key={d.id}
+                            onClick={() => { setSelectedCimitero(cimitero || null); setSelectedDefunto(d); }}
+                            className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
+                          >
+                            <div className="font-medium text-slate-800">{d.cognome} {d.nome}</div>
+                            <div className="text-xs text-slate-400 mt-0.5 flex gap-3">
+                              {cimitero && <span>{cimitero.nome}</span>}
+                              {d.settore && <span>Sett. {d.settore}</span>}
+                              {d.data_morte && <span>† {d.data_morte}</span>}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </ScrollArea>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Cimiteri maggiori */}
           <section className="mb-10">
             <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">
