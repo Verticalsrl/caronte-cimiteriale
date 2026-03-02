@@ -150,7 +150,7 @@ export default function Admin() {
   const getCimiteroNome = (id) => cimiteri.find(c => c.id === id)?.nome || '-';
 
   const handleImportCsv = async (cimitero) => {
-    const csvUrl = cimitero.google_sheet_id;
+    const csvUrl = cimitero.google_sheet_id_loculi || cimitero.google_sheet_id_fosse;
     if (!csvUrl) {
       toast.error('Nessun URL CSV configurato per questo cimitero');
       return;
