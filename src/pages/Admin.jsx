@@ -274,10 +274,16 @@ export default function Admin() {
                             placeholder="https://..." />
                         </div>
                         <div className="col-span-2 space-y-2">
-                          <Label>ID Google Sheet</Label>
-                          <Input value={editingCimitero.google_sheet_id}
-                            onChange={e => setEditingCimitero({...editingCimitero, google_sheet_id: e.target.value})}
-                            placeholder="ID del foglio Google Sheets" />
+                          <Label>ID Google Sheet – Loculi</Label>
+                          <Input value={editingCimitero.google_sheet_id_loculi || ''}
+                            onChange={e => setEditingCimitero({...editingCimitero, google_sheet_id_loculi: e.target.value})}
+                            placeholder="ID del foglio Google Sheets per i loculi" />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                          <Label>ID Google Sheet – Fosse</Label>
+                          <Input value={editingCimitero.google_sheet_id_fosse || ''}
+                            onChange={e => setEditingCimitero({...editingCimitero, google_sheet_id_fosse: e.target.value})}
+                            placeholder="ID del foglio Google Sheets per le fosse" />
                         </div>
                       </div>
                     )}
