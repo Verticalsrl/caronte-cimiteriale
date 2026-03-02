@@ -61,10 +61,14 @@ export default function Home() {
     }
   }, [selectedCimitero?.id]);
 
-  // Reset on cimitero change
+  // Reset on cimitero change (but preserve selectedDefunto if set from global search)
+  const prevCimiteroId = React.useRef(null);
   useEffect(() => {
-    setSelectedDefunto(null);
-    setSearchParams({ searchText: '', settore: '' });
+    if (prevCimiteroId.current !== null && prevCimiteroId.current !== selectedCimitero?.id) {
+      setSelectedDefunto(null);
+      setSearchParams({ searchText: '', settore: '' });
+    }
+    prevCimiteroId.current = selectedCimitero?.id ?? null;
   }, [selectedCimitero?.id]);
 
   // Get unique settori
