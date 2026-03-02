@@ -78,6 +78,12 @@ export default function Home() {
   }, [defunti]);
 
   // Filter defunti
+  // Chiudi il dettaglio quando parte una nuova ricerca
+  const handleSearch = (params) => {
+    setSelectedDefunto(null);
+    setSearchParams(params);
+  };
+
   const filteredDefunti = useMemo(() => {
     return defunti.filter(d => {
       const searchLower = searchParams.searchText.toLowerCase();
