@@ -340,7 +340,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
         {/* Search */}
         <div className="mb-6 -mt-8 relative z-10">
-          <SearchBar onSearch={setSearchParams} settori={settori} />
+          <SearchBar onSearch={handleSearch} settori={settori} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
