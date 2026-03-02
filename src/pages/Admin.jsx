@@ -33,7 +33,7 @@ const emptyDefunto = {
 const emptyCimitero = {
   nome: '', tipo: 'minore', indirizzo: '', zona: '', telefono: '',
   estensione_ha: '', centro_mappa_lat: '', centro_mappa_lng: '',
-  geojson_url: '', google_sheet_id: '', attivo: true
+  geojson_url: '', google_sheet_id_loculi: '', google_sheet_id_fosse: '', attivo: true
 };
 
 export default function Admin() {
