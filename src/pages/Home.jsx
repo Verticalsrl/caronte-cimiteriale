@@ -405,6 +405,13 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* Griglia Loculi - full width */}
+        <GrigliaLoculi
+          defunti={filteredDefunti}
+          selectedDefunto={selectedDefunto}
+          onSelectDefunto={setSelectedDefunto}
+        />
       </main>
 
       <footer className="mt-12 py-6 border-t border-slate-200 bg-white/50">
