@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Flower2, Search, MapPin, Users, ChevronRight, ArrowLeft, TreePine, FileDown, X } from "lucide-react";
+import GrigliaLoculi from '@/components/cemetery/GrigliaLoculi';
 
 const MAPPA_PDF_URL = "https://www.cimitericapitolini.it/public/files/cimiteri-di-roma/elenco-cimiteri/Mappa_Laurentino.pdf";
 
