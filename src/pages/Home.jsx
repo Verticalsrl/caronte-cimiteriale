@@ -345,7 +345,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Map */}
+          {/* Map + Griglia */}
           <div className="order-1 lg:order-2">
             <CemeteryMap
               geojsonData={geojsonData}
@@ -353,6 +353,11 @@ export default function Home() {
               selectedDefunto={selectedDefunto}
               center={mapCenter}
               zoom={selectedCimitero?.zoom_default || 18}
+            />
+            <GrigliaLoculi
+              defunti={filteredDefunti}
+              selectedDefunto={selectedDefunto}
+              onSelectDefunto={setSelectedDefunto}
             />
           </div>
 
