@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Grid3X3 } from "lucide-react";
 
 const RIGHE = 4;
-const COLONNE = 15;
+const COLONNE = 60;
 
 const PIANO_LABELS = ['4° Piano', '3° Piano', '2° Piano', '1° Piano'];
 
