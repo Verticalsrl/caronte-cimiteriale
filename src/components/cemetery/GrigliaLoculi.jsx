@@ -8,27 +8,18 @@ const COLONNE = 15;
 
 const PIANO_LABELS = ['4° Piano', '3° Piano', '2° Piano', '1° Piano'];
 
-export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedDefunto, settoreFiltro }) {
+export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedDefunto }) {
 
   const defuntiLoculi = defunti.filter(d => d.tipo_sepoltura === 'loculo');
 
-  const getDefunto = (riga, colonna) => {
-    return defuntiLoculi.find(d => {
-      const r = parseInt(d.fila);
-      const c = parseInt(d.numero);
-      return r === riga && c === colonna;
-    });
-  };
-
   const settori = [...new Set(defuntiLoculi.map(d => d.settore).filter(Boolean))].sort();
-
-  const [settoreSelezionato, setSettoreSelezionato] = useState(settoreFiltro || settori[0] || null);
+  const [settoreSelezionato, setSettoreSelezionato] = useState(settori[0] || null);
 
   const defuntiFiltrati = settoreSelezionato
     ? defuntiLoculi.filter(d => d.settore === settoreSelezionato)
     : defuntiLoculi;
 
-  const getDefuntoFiltrato = (riga, colonna) => {
+  const getDefunto = (riga, colonna) => {
     return defuntiFiltrati.find(d => {
       const r = parseInt(d.fila);
       const c = parseInt(d.numero);
@@ -51,7 +42,7 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
             Griglia Loculi
           </CardTitle>
           <div className="flex items-center gap-2 flex-wrap">
-            {settori.length > 0 && settori.map(s => (
+            {settori.map(s => (
               <button
                 key={s}
                 onClick={() => setSettoreSelezionato(s)}
@@ -72,81 +63,58 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
       </CardHeader>
 
       <CardContent>
-        {/* Legenda */}
-        <div className="flex items-center gap-4 mb-4 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5">
-            <span className="h-4 w-4 rounded bg-amber-400 inline-block" />
-            Occupato
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-4 w-4 rounded bg-slate-100 border border-slate-200 inline-block" />
-            Libero
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-4 w-4 rounded bg-amber-600 inline-block" />
-            Selezionato
-          </span>
-        </div>
-
-        {/* Griglia */}
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full">
-            {/* Header colonne */}
-            <div className="flex mb-1">
-              <div className="w-24 shrink-0" />
-              {Array.from({ length: COLONNE }, (_, i) => (
-                <div key={i} className="w-10 shrink-0 text-center text-xs text-slate-400 font-medium">
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-
-            {/* Righe (piani) — mostrate dal piano più alto in cima */}
-            {Array.from({ length: RIGHE }, (_, rigaIdx) => {
-              const riga = RIGHE - rigaIdx; // 4, 3, 2, 1
-              return (
-                <div key={riga} className="flex items-center mb-1">
-                  {/* Label piano */}
-                  <div className="w-24 shrink-0 text-xs text-slate-500 font-medium pr-2 text-right">
-                    {PIANO_LABELS[rigaIdx]}
-                  </div>
-
-                  {/* Celle */}
-                  {Array.from({ length: COLONNE }, (_, colIdx) => {
-                    const colonna = colIdx + 1;
-                    const defunto = getDefuntoFiltrato(riga, colonna);
-                    const isSelected = selectedDefunto?.id === defunto?.id;
-
-                    return (
-                      <div
-                        key={colonna}
-                        onClick={() => defunto && onSelectDefunto && onSelectDefunto(defunto)}
-                        title={defunto ? `${defunto.cognome} ${defunto.nome}` : `Loculo ${riga}-${colonna} libero`}
-                        className={`w-10 h-9 shrink-0 mx-0.5 rounded flex items-center justify-center cursor-pointer transition-all border text-xs font-bold
-                          ${isSelected
-                            ? 'bg-amber-600 border-amber-700 text-white shadow-md scale-105'
-                            : defunto
-                              ? 'bg-amber-400 border-amber-500 text-amber-900 hover:bg-amber-500 hover:scale-105'
-                              : 'bg-slate-100 border-slate-200 text-slate-300 hover:bg-slate-200 cursor-default'
-                          }`}
-                      >
-                        {defunto ? (defunto.cognome?.charAt(0) || '?') : ''}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+        <div className="w-full">
+          {/* Header colonne */}
+          <div className="flex mb-1">
+            <div className="w-20 shrink-0" />
+            {Array.from({ length: COLONNE }, (_, i) => (
+              <div key={i} className="flex-1 text-center text-xs text-slate-400 font-medium min-w-0">
+                {i + 1}
+              </div>
+            ))}
           </div>
-        </div>
 
-        {/* Numero colonna in fondo ripetuto */}
-        <div className="flex mt-1 ml-24">
-          {Array.from({ length: COLONNE }, (_, i) => (
-            <div key={i} className="w-10 mx-0.5 shrink-0 text-center text-xs text-slate-300">
-              {i + 1}
-            </div>
-          ))}
+          {/* Righe (piani) */}
+          {Array.from({ length: RIGHE }, (_, rigaIdx) => {
+            const riga = RIGHE - rigaIdx;
+            return (
+              <div key={riga} className="flex items-center mb-1">
+                <div className="w-20 shrink-0 text-xs text-slate-500 font-medium pr-2 text-right">
+                  {PIANO_LABELS[rigaIdx]}
+                </div>
+                {Array.from({ length: COLONNE }, (_, colIdx) => {
+                  const colonna = colIdx + 1;
+                  const defunto = getDefunto(riga, colonna);
+                  const isSelected = selectedDefunto?.id === defunto?.id;
+
+                  return (
+                    <div
+                      key={colonna}
+                      onClick={() => defunto && onSelectDefunto && onSelectDefunto(defunto)}
+                      title={defunto ? `${defunto.cognome} ${defunto.nome}` : `Loculo libero`}
+                      className={`flex-1 min-w-0 h-9 mx-px rounded transition-all border
+                        ${isSelected
+                          ? 'bg-amber-600 border-amber-700 shadow-md scale-105'
+                          : defunto
+                            ? 'bg-amber-400 border-amber-500 hover:bg-amber-500 hover:scale-105 cursor-pointer'
+                            : 'bg-slate-100 border-slate-200'
+                        }`}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+
+          {/* Footer colonne */}
+          <div className="flex mt-1">
+            <div className="w-20 shrink-0" />
+            {Array.from({ length: COLONNE }, (_, i) => (
+              <div key={i} className="flex-1 text-center text-xs text-slate-300 min-w-0">
+                {i + 1}
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
