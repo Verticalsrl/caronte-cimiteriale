@@ -165,13 +165,15 @@ export default function Admin() {
     setImportingId(cimitero.id);
     try {
       let totalImported = 0;
+      const warnings = [];
       if (hasLoculi) {
         const resp = await base44.functions.invoke('importDefuntiCsv', {
           cimitero_id: cimitero.id,
           csv_url: cimitero.google_sheet_id_loculi,
           tipo_sepoltura: 'loculo',
         });
-        totalImported += resp.data.imported || 0;
+        if (resp.data.error) warnings.push(`Loculi: ${resp.data.error}`);
+        else totalImported += resp.data.imported || 0;
       }
       if (hasFosse) {
         const resp = await base44.functions.invoke('importDefuntiCsv', {
@@ -179,9 +181,15 @@ export default function Admin() {
           csv_url: cimitero.google_sheet_id_fosse,
           tipo_sepoltura: 'terra',
         });
-        totalImported += resp.data.imported || 0;
+        if (resp.data.error) warnings.push(`Fosse: ${resp.data.error}`);
+        else totalImported += resp.data.imported || 0;
       }
-      toast.success(`Importati ${totalImported} defunti`);
+      if (warnings.length) {
+        toast.error(warnings.join('\n'), { duration: 10000 });
+      }
+      if (totalImported > 0) {
+        toast.success(`Importati ${totalImported} defunti`);
+      }
       queryClient.invalidateQueries(['defunti-admin']);
     } catch (e) {
       toast.error('Errore importazione: ' + e.message);
