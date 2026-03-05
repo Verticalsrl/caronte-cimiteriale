@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
@@ -49,13 +49,26 @@ export default function Admin() {
   // Fetch data
   const { data: defunti = [] } = useQuery({
     queryKey: ['defunti-admin'],
-    queryFn: () => base44.entities.Defunto.list('-updated_date'),
+    queryFn: () => base44.entities.Defunto.list('-updated_date', 10000),
   });
 
   const { data: cimiteri = [] } = useQuery({
     queryKey: ['cimiteri-admin'],
     queryFn: () => base44.entities.Cimitero.list('nome'),
   });
+
+  // Conteggio defunti per cimitero
+  const defuntiPerCimitero = useMemo(() => {
+    const map = {};
+    for (const d of defunti) {
+      if (!d.cimitero_id) continue;
+      if (!map[d.cimitero_id]) map[d.cimitero_id] = { totale: 0, loculi: 0, fosse: 0 };
+      map[d.cimitero_id].totale++;
+      if (d.tipo_sepoltura === 'loculo') map[d.cimitero_id].loculi++;
+      else if (d.tipo_sepoltura === 'terra') map[d.cimitero_id].fosse++;
+    }
+    return map;
+  }, [defunti]);
 
   // ── Defunto mutations ──
   const createDefuntoMutation = useMutation({
@@ -335,6 +348,7 @@ export default function Admin() {
                         <TableHead>Indirizzo</TableHead>
                         <TableHead>Zona</TableHead>
                         <TableHead>GeoJSON</TableHead>
+                        <TableHead>Defunti</TableHead>
                         <TableHead>Attivo</TableHead>
                         <TableHead className="w-24">Azioni</TableHead>
                       </TableRow>
@@ -355,6 +369,21 @@ export default function Admin() {
                               ? <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">✓ Configurato</Badge>
                               : <Badge variant="outline" className="text-xs text-slate-400">Non impostato</Badge>
                             }
+                          </TableCell>
+                          <TableCell>
+                            {(() => {
+                              const cnt = defuntiPerCimitero[c.id];
+                              if (!cnt) return <span className="text-xs text-slate-400">0</span>;
+                              return (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="font-semibold text-slate-800 text-sm">{cnt.totale}</span>
+                                  <div className="flex gap-1">
+                                    {cnt.loculi > 0 && <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs px-1 py-0">{cnt.loculi} loc</Badge>}
+                                    {cnt.fosse > 0 && <Badge className="bg-green-100 text-green-800 border-green-200 text-xs px-1 py-0">{cnt.fosse} fos</Badge>}
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </TableCell>
                           <TableCell>
                             <button
