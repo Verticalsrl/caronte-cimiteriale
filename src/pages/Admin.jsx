@@ -150,18 +150,32 @@ export default function Admin() {
   const getCimiteroNome = (id) => cimiteri.find(c => c.id === id)?.nome || '-';
 
   const handleImportCsv = async (cimitero) => {
-    const csvUrl = cimitero.google_sheet_id_loculi || cimitero.google_sheet_id_fosse;
-    if (!csvUrl) {
+    const hasLoculi = !!cimitero.google_sheet_id_loculi;
+    const hasFosse = !!cimitero.google_sheet_id_fosse;
+    if (!hasLoculi && !hasFosse) {
       toast.error('Nessun URL CSV configurato per questo cimitero');
       return;
     }
     setImportingId(cimitero.id);
     try {
-      const resp = await base44.functions.invoke('importDefuntiCsv', {
-        cimitero_id: cimitero.id,
-        csv_url: csvUrl,
-      });
-      toast.success(`Importati ${resp.data.imported} defunti`);
+      let totalImported = 0;
+      if (hasLoculi) {
+        const resp = await base44.functions.invoke('importDefuntiCsv', {
+          cimitero_id: cimitero.id,
+          csv_url: cimitero.google_sheet_id_loculi,
+          tipo_sepoltura: 'loculo',
+        });
+        totalImported += resp.data.imported || 0;
+      }
+      if (hasFosse) {
+        const resp = await base44.functions.invoke('importDefuntiCsv', {
+          cimitero_id: cimitero.id,
+          csv_url: cimitero.google_sheet_id_fosse,
+          tipo_sepoltura: 'terra',
+        });
+        totalImported += resp.data.imported || 0;
+      }
+      toast.success(`Importati ${totalImported} defunti`);
       queryClient.invalidateQueries(['defunti-admin']);
     } catch (e) {
       toast.error('Errore importazione: ' + e.message);
