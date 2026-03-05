@@ -3,9 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { X, MapPin, Calendar, User, Home, FileText, Flower2 } from "lucide-react";
-import { format } from "date-fns";
-import { it } from "date-fns/locale";
+import { X, MapPin, Calendar, FileText, Flower2 } from "lucide-react";
+import { formatDate, calcAge } from '@/utils/defunto';
 
 const tipoLabels = {
   loculo: 'Loculo',
@@ -18,23 +17,7 @@ const tipoLabels = {
 export default function DefuntoDetail({ defunto, onClose, onLocate }) {
   if (!defunto) return null;
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return 'Non disponibile';
-    try {
-      return format(new Date(dateStr), 'd MMMM yyyy', { locale: it });
-    } catch {
-      return dateStr;
-    }
-  };
-
-  const calcAge = () => {
-    if (!defunto.data_nascita || !defunto.data_morte) return null;
-    const birth = new Date(defunto.data_nascita);
-    const death = new Date(defunto.data_morte);
-    return Math.floor((death - birth) / (365.25 * 24 * 60 * 60 * 1000));
-  };
-
-  const age = calcAge();
+  const age = calcAge(defunto.data_nascita, defunto.data_morte);
 
   return (
     <Card className="bg-white border-0 shadow-xl rounded-2xl overflow-hidden">
@@ -62,9 +45,9 @@ export default function DefuntoDetail({ defunto, onClose, onLocate }) {
 
         <div className="flex items-center gap-2 text-sm text-white/70">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(defunto.data_nascita)}</span>
+          <span>{formatDate(defunto.data_nascita, 'Non disponibile')}</span>
           <span className="mx-1">—</span>
-          <span>{formatDate(defunto.data_morte)}</span>
+          <span>{formatDate(defunto.data_morte, 'Non disponibile')}</span>
           {age && <span className="ml-2 text-amber-400">({age} anni)</span>}
         </div>
       </CardHeader>

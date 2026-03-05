@@ -2,9 +2,8 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Flower2 } from "lucide-react";
-import { format } from "date-fns";
-import { it } from "date-fns/locale";
+import { MapPin, Calendar } from "lucide-react";
+import { formatDate, calcAge } from '@/utils/defunto';
 
 const tipoSepolturaBadge = {
   loculo: { label: 'Loculo', color: 'bg-blue-100 text-blue-800 border-blue-200' },
@@ -15,23 +14,7 @@ const tipoSepolturaBadge = {
 };
 
 export default function DefuntoCard({ defunto, onLocate, isSelected }) {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '-';
-    try {
-      return format(new Date(dateStr), 'd MMMM yyyy', { locale: it });
-    } catch {
-      return dateStr;
-    }
-  };
-
-  const calcAge = () => {
-    if (!defunto.data_nascita || !defunto.data_morte) return null;
-    const birth = new Date(defunto.data_nascita);
-    const death = new Date(defunto.data_morte);
-    return Math.floor((death - birth) / (365.25 * 24 * 60 * 60 * 1000));
-  };
-
-  const age = calcAge();
+  const age = calcAge(defunto.data_nascita, defunto.data_morte);
   const tipo = tipoSepolturaBadge[defunto.tipo_sepoltura] || tipoSepolturaBadge.loculo;
 
   return (
