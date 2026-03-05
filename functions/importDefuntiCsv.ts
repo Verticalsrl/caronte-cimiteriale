@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Accesso non autorizzato' }, { status: 403 });
     }
 
-    const { cimitero_id, csv_url } = await req.json();
+    const { cimitero_id, csv_url, tipo_sepoltura } = await req.json();
     
     if (!cimitero_id || !csv_url) {
       return Response.json({ error: 'cimitero_id e csv_url sono obbligatori' }, { status: 400 });
