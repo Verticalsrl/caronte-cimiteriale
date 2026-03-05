@@ -65,6 +65,7 @@ export default function Admin() {
       toast.success('Defunto aggiunto');
       setIsDefuntoDialogOpen(false);
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile aggiungere il defunto')),
   });
 
   const updateDefuntoMutation = useMutation({
@@ -74,6 +75,7 @@ export default function Admin() {
       toast.success('Defunto aggiornato');
       setIsDefuntoDialogOpen(false);
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile aggiornare il defunto')),
   });
 
   const deleteDefuntoMutation = useMutation({
@@ -82,6 +84,7 @@ export default function Admin() {
       queryClient.invalidateQueries(['defunti-admin']);
       toast.success('Eliminato');
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile eliminare il defunto')),
   });
 
   // ── Cimitero mutations ──
@@ -93,6 +96,7 @@ export default function Admin() {
       toast.success('Cimitero aggiunto');
       setIsCimiteroDialogOpen(false);
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile aggiungere il cimitero')),
   });
 
   const updateCimiteroMutation = useMutation({
@@ -103,6 +107,7 @@ export default function Admin() {
       toast.success('Cimitero aggiornato');
       setIsCimiteroDialogOpen(false);
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile aggiornare il cimitero')),
   });
 
   const deleteCimiteroMutation = useMutation({
@@ -112,12 +117,13 @@ export default function Admin() {
       queryClient.invalidateQueries(['cimiteri']);
       toast.success('Cimitero eliminato');
     },
+    onError: (err) => toast.error('Errore: ' + (err.message || 'Impossibile eliminare il cimitero')),
   });
 
   const handleSaveDefunto = () => {
     const data = { ...editingDefunto };
-    if (data.coordinate_lat) data.coordinate_lat = parseFloat(data.coordinate_lat);
-    if (data.coordinate_lng) data.coordinate_lng = parseFloat(data.coordinate_lng);
+    if (data.coordinate_lat !== '') data.coordinate_lat = parseFloat(data.coordinate_lat) || null;
+    if (data.coordinate_lng !== '') data.coordinate_lng = parseFloat(data.coordinate_lng) || null;
     if (editingDefunto.id) {
       updateDefuntoMutation.mutate({ id: editingDefunto.id, data });
     } else {
@@ -127,9 +133,9 @@ export default function Admin() {
 
   const handleSaveCimitero = () => {
     const data = { ...editingCimitero };
-    if (data.estensione_ha) data.estensione_ha = parseFloat(data.estensione_ha);
-    if (data.centro_mappa_lat) data.centro_mappa_lat = parseFloat(data.centro_mappa_lat);
-    if (data.centro_mappa_lng) data.centro_mappa_lng = parseFloat(data.centro_mappa_lng);
+    if (data.estensione_ha !== '') data.estensione_ha = parseFloat(data.estensione_ha) || null;
+    if (data.centro_mappa_lat !== '') data.centro_mappa_lat = parseFloat(data.centro_mappa_lat) || null;
+    if (data.centro_mappa_lng !== '') data.centro_mappa_lng = parseFloat(data.centro_mappa_lng) || null;
     if (editingCimitero.id) {
       updateCimiteroMutation.mutate({ id: editingCimitero.id, data });
     } else {
@@ -501,7 +507,7 @@ export default function Admin() {
                       <SelectValue placeholder="Tutti i cimiteri" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={null}>Tutti i cimiteri</SelectItem>
+                      <SelectItem value="">Tutti i cimiteri</SelectItem>
                       {cimiteri.map(c => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
                     </SelectContent>
                   </Select>

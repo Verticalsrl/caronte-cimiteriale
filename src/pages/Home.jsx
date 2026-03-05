@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import SearchBar from '@/components/cemetery/SearchBar';
 import DefuntoCard from '@/components/cemetery/DefuntoCard';
 import DefuntoDetail from '@/components/cemetery/DefuntoDetail';
@@ -18,7 +18,6 @@ export default function Home() {
   const [selectedCimitero, setSelectedCimitero] = useState(null);
   const [searchParams, setSearchParams] = useState({ searchText: '', settore: '' });
   const [selectedDefunto, setSelectedDefunto] = useState(null);
-  const [geojsonData, setGeojsonData] = useState(null);
   const [globalSearch, setGlobalSearch] = useState('');
 
   // Fetch cimiteri
@@ -49,27 +48,23 @@ export default function Home() {
     enabled: !!selectedCimitero,
   });
 
-  // Load GeoJSON when cimitero is selected
-  useEffect(() => {
-    if (selectedCimitero?.geojson_url) {
-      setGeojsonData(null);
-      fetch(selectedCimitero.geojson_url)
-        .then(res => res.json())
-        .then(setGeojsonData)
-        .catch(console.error);
-    } else {
-      setGeojsonData(null);
-    }
-  }, [selectedCimitero?.id]);
+  // Fetch GeoJSON tramite React Query per gestione errori e caching
+  const { data: geojsonData = null } = useQuery({
+    queryKey: ['geojson', selectedCimitero?.id],
+    queryFn: async () => {
+      const res = await fetch(selectedCimitero.geojson_url);
+      if (!res.ok) throw new Error(`GeoJSON non disponibile (${res.status})`);
+      return res.json();
+    },
+    enabled: !!selectedCimitero?.geojson_url,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
 
-  // Reset on cimitero change (but preserve selectedDefunto if set from global search)
-  const prevCimiteroId = React.useRef(null);
+  // Reset ricerca al cambio di cimitero
   useEffect(() => {
-    if (prevCimiteroId.current !== null && prevCimiteroId.current !== selectedCimitero?.id) {
-      setSelectedDefunto(null);
-      setSearchParams({ searchText: '', settore: '' });
-    }
-    prevCimiteroId.current = selectedCimitero?.id ?? null;
+    setSelectedDefunto(null);
+    setSearchParams({ searchText: '', settore: '' });
   }, [selectedCimitero?.id]);
 
   // Get unique settori

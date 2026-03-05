@@ -21,12 +21,9 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
 
   const getDefunto = (riga, colonna) => {
     return defuntiFiltrati.find(d => {
-      if (!d.note) return false;
-      const parts = d.note.split('/');
-      if (parts.length < 2) return false;
-      const c = parseInt(parts[0]);
-      const r = parseInt(parts[1]);
-      return r === riga && c === colonna;
+      const r = parseInt(d.fila);
+      const c = parseInt(d.numero);
+      return !isNaN(r) && !isNaN(c) && r === riga && c === colonna;
     });
   };
 

@@ -10,24 +10,25 @@ export default function Layout({ children, currentPageName }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     const checkAuth = async () => {
       try {
         const isAuth = await base44.auth.isAuthenticated();
+        if (cancelled) return;
         if (isAuth) {
           const userData = await base44.auth.me();
+          if (cancelled) return;
           setUser(userData);
+          setLoading(false);
         } else {
-          // Redirect to login
           base44.auth.redirectToLogin(window.location.href);
-          return;
         }
-      } catch (error) {
-        base44.auth.redirectToLogin(window.location.href);
-        return;
+      } catch {
+        if (!cancelled) base44.auth.redirectToLogin(window.location.href);
       }
-      setLoading(false);
     };
     checkAuth();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {
