@@ -72,11 +72,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'CSV vuoto o non valido' }, { status: 400 });
     }
 
-    // Delete existing defunti for this cemetery in batches
-    let existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
+    // Delete existing defunti for this cemetery filtered by tipo_sepoltura
+    // (avoids wiping records of a different type imported in the same session)
+    const deleteFilter = { cimitero_id, ...(tipo_sepoltura ? { tipo_sepoltura } : {}) };
+    let existingPage = await base44.asServiceRole.entities.Defunto.filter(deleteFilter, null, 500);
     while (existingPage.length > 0) {
       await Promise.all(existingPage.map(d => base44.asServiceRole.entities.Defunto.delete(d.id)));
-      existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
+      existingPage = await base44.asServiceRole.entities.Defunto.filter(deleteFilter, null, 500);
     }
 
     // Build records to import
