@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
         settore: settore,
         fila: fila?.trim() || '',
         numero: numero?.trim() || '',
-        tipo_sepoltura: 'loculo',
+        tipo_sepoltura: tipo_sepoltura || 'loculo',
         geojson_id: row['ID']?.trim() || '',
         note: row['blocco']?.trim() || '',
         cimitero_id,
