@@ -59,18 +59,27 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Accesso non autorizzato' }, { status: 403 });
     }
 
-    const { cimitero_id, csv_url, tipo_sepoltura } = await req.json();
-    
-    if (!cimitero_id || !csv_url) {
+    const { cimitero_id, csv_url: csv_input, tipo_sepoltura } = await req.json();
+
+    if (!cimitero_id || !csv_input) {
       return Response.json({ error: 'cimitero_id e csv_url sono obbligatori' }, { status: 400 });
     }
+
+    // Se è un ID Google Sheets (non un URL completo), costruisce l'URL di export CSV
+    const csv_url = csv_input.startsWith('http')
+      ? csv_input
+      : `https://docs.google.com/spreadsheets/d/${csv_input.trim()}/export?format=csv&gid=0`;
 
     // Fetch CSV
     const csvResp = await fetch(csv_url);
     if (!csvResp.ok) {
-      return Response.json({ error: 'Impossibile scaricare il CSV' }, { status: 500 });
+      return Response.json({ error: `Impossibile scaricare il CSV (HTTP ${csvResp.status}). Verifica che il foglio sia pubblico.` }, { status: 500 });
     }
     const csvText = await csvResp.text();
+    // Controlla che la risposta sia CSV e non HTML (foglio privato o URL errato)
+    if (csvText.trimStart().startsWith('<')) {
+      return Response.json({ error: 'Il foglio Google Sheets non è pubblico o l\'URL/ID non è corretto.' }, { status: 400 });
+    }
     const rows = parseCsv(csvText);
 
     if (rows.length === 0) {
