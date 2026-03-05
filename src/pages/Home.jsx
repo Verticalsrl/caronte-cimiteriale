@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import SearchBar from '@/components/cemetery/SearchBar';
@@ -61,10 +61,14 @@ export default function Home() {
     retry: 1,
   });
 
-  // Reset ricerca al cambio di cimitero
+  // Reset ricerca solo quando si CAMBIA cimitero (non al primo accesso da ricerca globale)
+  const prevCimiteroId = useRef(null);
   useEffect(() => {
-    setSelectedDefunto(null);
-    setSearchParams({ searchText: '', settore: '' });
+    if (prevCimiteroId.current !== null && prevCimiteroId.current !== selectedCimitero?.id) {
+      setSelectedDefunto(null);
+      setSearchParams({ searchText: '', settore: '' });
+    }
+    prevCimiteroId.current = selectedCimitero?.id ?? null;
   }, [selectedCimitero?.id]);
 
   // Get unique settori
