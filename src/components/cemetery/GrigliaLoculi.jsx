@@ -9,6 +9,8 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
 
   const defuntiLoculi = defunti.filter(d => d.tipo_sepoltura === 'loculo');
 
+  if (defuntiLoculi.length === 0) return null;
+
   const settori = [...new Set(defuntiLoculi.map(d => d.settore).filter(Boolean))].sort();
   const [settoreSelezionato, setSettoreSelezionato] = useState(null);
 
