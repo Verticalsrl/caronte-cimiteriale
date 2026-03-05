@@ -81,30 +81,52 @@ Deno.serve(async (req) => {
       existingPage = await base44.asServiceRole.entities.Defunto.filter(deleteFilter, null, 500);
     }
 
+    // Helper: pick first non-empty value among candidate column names
+    const col = (row, ...keys) => {
+      for (const k of keys) {
+        const v = row[k]?.trim();
+        if (v) return v;
+      }
+      return '';
+    };
+
     // Build records to import
     const records = [];
     for (const row of rows) {
-      const cognome = row['defunto_cognome']?.trim();
-      const nome = row['defunto_nome']?.trim();
+      const cognome = col(row, 'defunto_cognome', 'cognome', 'COGNOME', 'Cognome');
+      const nome    = col(row, 'defunto_nome',    'nome',    'NOME',    'Nome');
       if (!cognome && !nome) continue;
 
-      const settore = row['settore']?.trim() || row['settore_codice']?.trim() || '';
-      const loculoNum = row['loculo_numero']?.trim() || '';
-      const [fila, numero] = loculoNum.includes('/') ? loculoNum.split('/') : ['', loculoNum];
+      const settore  = col(row, 'settore', 'settore_codice', 'SETTORE', 'Settore');
+      const posNum   = col(row, 'loculo_numero', 'fossa_numero', 'numero_fossa',
+                               'numero', 'NUMERO', 'Numero', 'tomba_numero');
+      const [fila, numero] = posNum.includes('/') ? posNum.split('/') : ['', posNum];
 
       records.push({
-        cognome: cognome || '',
-        nome: nome || '',
-        data_nascita: parseDate(row['defunto_datanascita']),
-        data_morte: parseDate(row['defunto_datadecesso']),
-        settore: settore,
-        fila: fila?.trim() || '',
+        cognome,
+        nome,
+        data_nascita: parseDate(col(row, 'defunto_datanascita', 'data_nascita', 'nascita',
+                                      'DATA_NASCITA', 'Data Nascita')),
+        data_morte:   parseDate(col(row, 'defunto_datadecesso', 'data_morte', 'data_decesso',
+                                      'decesso', 'DATA_MORTE', 'Data Morte', 'Data Decesso')),
+        settore,
+        fila:  fila?.trim()   || '',
         numero: numero?.trim() || '',
         tipo_sepoltura: tipo_sepoltura || 'loculo',
-        geojson_id: row['ID']?.trim() || '',
-        note: row['blocco']?.trim() || '',
+        geojson_id: col(row, 'ID', 'id', 'Id', 'geojson_id'),
+        note: col(row, 'blocco', 'note', 'NOTE', 'Note'),
         cimitero_id,
       });
+    }
+
+    // Se ci sono righe ma nessun record parsato, probabilmente i nomi colonna non corrispondono
+    if (records.length === 0 && rows.length > 0) {
+      const headers = Object.keys(rows[0]).join(', ');
+      return Response.json({
+        error: `Nessun defunto trovato nel CSV. Colonne rilevate: [${headers}]. Attesi: defunto_cognome/cognome, defunto_nome/nome`,
+        headers,
+        total: rows.length,
+      }, { status: 422 });
     }
 
     // Bulk insert in batches of 100
