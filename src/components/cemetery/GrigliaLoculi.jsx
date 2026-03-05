@@ -3,9 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Grid3X3 } from "lucide-react";
 
-const RIGHE = 4;
-const COLONNE = 60;
-
 const PIANO_LABELS = ['4° Piano', '3° Piano', '2° Piano', '1° Piano'];
 
 export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedDefunto }) {
@@ -32,6 +29,12 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
   const defuntiFiltrati = settoreSelezionato
     ? defuntiLoculi.filter(d => d.settore === settoreSelezionato)
     : defuntiLoculi;
+
+  // Calcola dimensioni griglia dinamicamente dai dati reali
+  const maxFila    = Math.max(4, ...defuntiFiltrati.map(d => parseInt(d.fila)   || 0));
+  const maxColonna = Math.max(1, ...defuntiFiltrati.map(d => parseInt(d.numero) || 0));
+  const RIGHE   = maxFila;
+  const COLONNE = maxColonna;
 
   const getDefunto = (riga, colonna) => {
     return defuntiFiltrati.find(d => {
@@ -94,7 +97,7 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
             return (
               <div key={riga} className="flex items-center mb-1">
                 <div className="w-20 shrink-0 text-xs text-slate-500 font-medium pr-2 text-right">
-                  {PIANO_LABELS[rigaIdx]}
+                  {PIANO_LABELS[rigaIdx] || `${riga}° Piano`}
                 </div>
                 {Array.from({ length: COLONNE }, (_, colIdx) => {
                   const colonna = colIdx + 1;
