@@ -99,7 +99,7 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
                         ${isSelected
                           ? 'bg-amber-600 border-amber-700 shadow-md scale-105'
                           : defunto
-                            ? 'bg-amber-400 border-amber-500 hover:bg-amber-500 hover:scale-105 cursor-pointer'
+                            ? 'bg-slate-300 border-slate-400 hover:bg-slate-400 hover:scale-105 cursor-pointer'
                             : 'bg-slate-100 border-slate-200'
                         }`}
                     />
