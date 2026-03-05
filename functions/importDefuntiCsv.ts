@@ -100,7 +100,13 @@ Deno.serve(async (req) => {
       const settore  = col(row, 'settore', 'settore_codice', 'SETTORE', 'Settore');
       const posNum   = col(row, 'loculo_numero', 'fossa_numero', 'numero_fossa',
                                'numero', 'NUMERO', 'Numero', 'tomba_numero');
-      const [fila, numero] = posNum.includes('/') ? posNum.split('/') : ['', posNum];
+      // Support separators: '/' (3/15) or '-' (3-15); fallback to a separate fila column
+      let [fila, numero] = posNum.includes('/')
+        ? posNum.split('/')
+        : posNum.includes('-') ? posNum.split('-') : ['', posNum];
+      if (!fila) {
+        fila = col(row, 'fila', 'FILA', 'piano', 'PIANO', 'piano_numero', 'riga');
+      }
 
       records.push({
         cognome,
