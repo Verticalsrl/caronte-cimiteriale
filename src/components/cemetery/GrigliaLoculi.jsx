@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Grid3X3 } from "lucide-react";
@@ -13,7 +13,21 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
   const defuntiLoculi = defunti.filter(d => d.tipo_sepoltura === 'loculo');
 
   const settori = [...new Set(defuntiLoculi.map(d => d.settore).filter(Boolean))].sort();
-  const [settoreSelezionato, setSettoreSelezionato] = useState(settori[0] || null);
+  const [settoreSelezionato, setSettoreSelezionato] = useState(null);
+
+  // Inizializza il settore al caricamento dei dati
+  useEffect(() => {
+    if (settori.length > 0 && !settoreSelezionato) {
+      setSettoreSelezionato(settori[0]);
+    }
+  }, [settori.length]);
+
+  // Segue automaticamente il settore del defunto selezionato
+  useEffect(() => {
+    if (selectedDefunto?.settore && selectedDefunto.tipo_sepoltura === 'loculo') {
+      setSettoreSelezionato(selectedDefunto.settore);
+    }
+  }, [selectedDefunto?.id]);
 
   const defuntiFiltrati = settoreSelezionato
     ? defuntiLoculi.filter(d => d.settore === settoreSelezionato)
