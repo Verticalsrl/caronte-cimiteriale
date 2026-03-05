@@ -78,19 +78,17 @@ Deno.serve(async (req) => {
     }
 
     // Delete existing defunti for this cemetery filtered by tipo_sepoltura
-    // (avoids wiping records of a different type imported in the same session)
-    // Filter by tipo_sepoltura in JS because base44 may not support it as a server-side filter
-    let existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
-    while (existingPage.length > 0) {
-      const toDelete = tipo_sepoltura
-        ? existingPage.filter(d => d.tipo_sepoltura === tipo_sepoltura)
-        : existingPage;
-      if (toDelete.length > 0) {
-        await Promise.all(toDelete.map(d => base44.asServiceRole.entities.Defunto.delete(d.id)));
+    // Fetch up to 5000 records in one shot to avoid rate limiting from looping
+    const existing = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 5000);
+    const toDelete = tipo_sepoltura
+      ? existing.filter(d => d.tipo_sepoltura === tipo_sepoltura)
+      : existing;
+    if (toDelete.length > 0) {
+      // Delete in batches of 50 to avoid hitting rate limits
+      const DEL_BATCH = 50;
+      for (let i = 0; i < toDelete.length; i += DEL_BATCH) {
+        await Promise.all(toDelete.slice(i, i + DEL_BATCH).map(d => base44.asServiceRole.entities.Defunto.delete(d.id)));
       }
-      // If nothing was deleted (all were the other type), stop to avoid infinite loop
-      if (toDelete.length === 0) break;
-      existingPage = await base44.asServiceRole.entities.Defunto.filter({ cimitero_id }, null, 500);
     }
 
     // Helper: pick first non-empty value among candidate column names
