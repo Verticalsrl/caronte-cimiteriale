@@ -29,7 +29,7 @@ export default function Home() {
   // Fetch tutti i defunti per la ricerca globale
   const { data: tuttiDefunti = [], isLoading: loadingGlobal } = useQuery({
     queryKey: ['defunti-global'],
-    queryFn: () => base44.entities.Defunto.list('cognome', 5000),
+    queryFn: () => base44.entities.Defunto.list('cognome', 10000),
     enabled: globalSearch.length >= 2,
   });
 
@@ -44,7 +44,7 @@ export default function Home() {
   // Fetch defunti del cimitero selezionato
   const { data: defunti = [], isLoading: loadingDefunti } = useQuery({
     queryKey: ['defunti', selectedCimitero?.id],
-    queryFn: () => base44.entities.Defunto.filter({ cimitero_id: selectedCimitero.id }, '-cognome'),
+    queryFn: () => base44.entities.Defunto.filter({ cimitero_id: selectedCimitero.id }, '-cognome', 10000),
     enabled: !!selectedCimitero,
   });
 
