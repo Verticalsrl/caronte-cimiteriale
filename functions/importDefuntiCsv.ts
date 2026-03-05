@@ -11,24 +11,29 @@ function parseDate(str) {
 }
 
 function parseCsv(text) {
-  const lines = text.split('\n');
+  // Rimuove BOM UTF-8 se presente
+  const clean = text.replace(/^\ufeff/, '');
+  const lines = clean.split('\n');
   if (lines.length < 2) return [];
-  
-  const header = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+
+  // Rileva automaticamente il delimitatore (virgola o punto e virgola)
+  const firstLine = lines[0];
+  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
+
+  const header = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
   const rows = [];
-  
+
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
-    
-    // Simple CSV parse (handles basic cases)
+
     const values = [];
     let current = '';
     let inQuotes = false;
     for (let c = 0; c < line.length; c++) {
       if (line[c] === '"') {
         inQuotes = !inQuotes;
-      } else if (line[c] === ',' && !inQuotes) {
+      } else if (line[c] === delimiter && !inQuotes) {
         values.push(current.trim());
         current = '';
       } else {
@@ -36,12 +41,12 @@ function parseCsv(text) {
       }
     }
     values.push(current.trim());
-    
+
     const row = {};
     header.forEach((h, idx) => { row[h] = values[idx] || ''; });
     rows.push(row);
   }
-  
+
   return rows;
 }
 
