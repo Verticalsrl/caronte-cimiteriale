@@ -30,24 +30,24 @@ export default function GrigliaLoculi({ defunti = [], onSelectDefunto, selectedD
     ? defuntiLoculi.filter(d => d.settore === settoreSelezionato)
     : defuntiLoculi;
 
-  // Calcola dimensioni griglia dinamicamente dai dati reali
-  const maxFila    = Math.max(4, ...defuntiFiltrati.map(d => parseInt(d.fila)   || 0));
-  const maxColonna = Math.max(1, ...defuntiFiltrati.map(d => parseInt(d.numero) || 0));
-  const RIGHE   = maxFila;
-  const COLONNE = maxColonna;
+  // fila = posizione orizzontale (colonna), numero = piano (riga verticale)
+  const maxPiano  = Math.max(4, ...defuntiFiltrati.map(d => parseInt(d.numero) || 0));
+  const maxFila   = Math.max(1, ...defuntiFiltrati.map(d => parseInt(d.fila)   || 0));
+  const RIGHE   = maxPiano;   // asse verticale = piano (numero)
+  const COLONNE = maxFila;    // asse orizzontale = fila
 
-  const getDefunto = (riga, colonna) => {
+  const getDefunto = (piano, fila) => {
     return defuntiFiltrati.find(d => {
-      const r = parseInt(d.fila);
-      const c = parseInt(d.numero);
-      return !isNaN(r) && !isNaN(c) && r === riga && c === colonna;
+      const p = parseInt(d.numero); // numero = piano
+      const f = parseInt(d.fila);   // fila   = colonna
+      return !isNaN(p) && !isNaN(f) && p === piano && f === fila;
     });
   };
 
   const totalOccupati = defuntiFiltrati.filter(d => {
-    const r = parseInt(d.fila);
-    const c = parseInt(d.numero);
-    return r >= 1 && r <= RIGHE && c >= 1 && c <= COLONNE;
+    const p = parseInt(d.numero);
+    const f = parseInt(d.fila);
+    return p >= 1 && p <= RIGHE && f >= 1 && f <= COLONNE;
   }).length;
 
   return (
