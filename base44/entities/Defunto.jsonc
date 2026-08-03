@@ -1,0 +1,79 @@
+{
+  "name": "Defunto",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome del defunto"
+    },
+    "cognome": {
+      "type": "string",
+      "description": "Cognome del defunto"
+    },
+    "data_nascita": {
+      "type": "string",
+      "format": "date",
+      "description": "Data di nascita"
+    },
+    "data_morte": {
+      "type": "string",
+      "format": "date",
+      "description": "Data di morte"
+    },
+    "luogo_nascita": {
+      "type": "string",
+      "description": "Luogo di nascita"
+    },
+    "settore": {
+      "type": "string",
+      "description": "Settore del cimitero (es. A, B, C)"
+    },
+    "fila": {
+      "type": "string",
+      "description": "Fila nel settore"
+    },
+    "numero": {
+      "type": "string",
+      "description": "Numero della tomba"
+    },
+    "tipo_sepoltura": {
+      "type": "string",
+      "enum": [
+        "loculo",
+        "cappella",
+        "terra",
+        "ossario",
+        "cinerario"
+      ],
+      "description": "Tipo di sepoltura"
+    },
+    "note": {
+      "type": "string",
+      "description": "Note aggiuntive"
+    },
+    "foto_url": {
+      "type": "string",
+      "description": "URL foto della tomba"
+    },
+    "coordinate_lat": {
+      "type": "number",
+      "description": "Latitudine"
+    },
+    "coordinate_lng": {
+      "type": "number",
+      "description": "Longitudine"
+    },
+    "geojson_id": {
+      "type": "string",
+      "description": "ID corrispondente nel GeoJSON"
+    },
+    "cimitero_id": {
+      "type": "string",
+      "description": "ID del cimitero di appartenenza"
+    }
+  },
+  "required": [
+    "cognome",
+    "nome"
+  ]
+}

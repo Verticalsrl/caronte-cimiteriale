@@ -1,0 +1,57 @@
+{
+  "name": "Cimitero",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome del cimitero"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "maggiore",
+        "minore"
+      ],
+      "description": "Tipo di cimitero"
+    },
+    "indirizzo": {
+      "type": "string",
+      "description": "Indirizzo del cimitero"
+    },
+    "zona": {
+      "type": "string",
+      "description": "Zona/municipio di Roma"
+    },
+    "telefono": {
+      "type": "string"
+    },
+    "estensione_ha": {
+      "type": "number",
+      "description": "Estensione in ettari"
+    },
+    "centro_mappa_lat": {
+      "type": "number"
+    },
+    "centro_mappa_lng": {
+      "type": "number"
+    },
+    "geojson_url": {
+      "type": "string"
+    },
+    "google_sheet_id_loculi": {
+      "type": "string",
+      "description": "ID Google Sheet con i dati dei loculi"
+    },
+    "google_sheet_id_fosse": {
+      "type": "string",
+      "description": "ID Google Sheet con i dati delle fosse"
+    },
+    "attivo": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "nome"
+  ]
+}

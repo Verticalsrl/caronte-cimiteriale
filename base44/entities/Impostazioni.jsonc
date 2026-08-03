@@ -1,0 +1,35 @@
+{
+  "name": "Impostazioni",
+  "type": "object",
+  "properties": {
+    "nome_cimitero": {
+      "type": "string",
+      "description": "Nome del cimitero"
+    },
+    "indirizzo": {
+      "type": "string",
+      "description": "Indirizzo del cimitero"
+    },
+    "centro_mappa_lat": {
+      "type": "number",
+      "description": "Latitudine centro mappa"
+    },
+    "centro_mappa_lng": {
+      "type": "number",
+      "description": "Longitudine centro mappa"
+    },
+    "zoom_default": {
+      "type": "number",
+      "description": "Zoom iniziale della mappa"
+    },
+    "geojson_url": {
+      "type": "string",
+      "description": "URL del file GeoJSON con la cartografia"
+    },
+    "google_sheet_id": {
+      "type": "string",
+      "description": "ID del foglio Google Sheets"
+    }
+  },
+  "required": []
+}
